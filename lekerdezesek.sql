@@ -108,6 +108,23 @@ join telepules t on p.ut = t.ut
 
 --i/j meg kellenek !!!!!!!!!!!!!!!!!
 
+--i
+--utanként hány euroút van ami nagyobb mint 100km?
+select p.ut, count(p.ut) as darab
+from palya p inner join europa e on e.ut = p.ut
+where p.kesz >= 100
+group by p.ut
+order by p.kesz desc
+
+--j
+--melyek azok a megyar utak amelyek 3 európai úthoz kapcsolódnak és nagyobbak mint 100km?
+select p.ut, count(p.ut) as darab
+from palya p inner join europa e on e.ut = p.ut
+where p.kesz >= 100
+group by p.ut
+having count(p.ut) = 3
+order by p.kesz desc
+
 --k
 -- ird ki az összes olyan települést ami nem határos semmivel, de az autopálya végén helyezkedik
 select distinct t.nev
@@ -123,3 +140,33 @@ left join vege v on t.id = v.telepid
 where t.hatar is null and v.id is not null
 group by t.nev;
 
+--m 
+--válasszuk ki azokat az európai utakat amelyeknek a település neve tartalmaz T-t
+
+select e.eurout, t.nev 
+from europa e left join palya p on e.ut = p.ut left join telepules t on p.ut = t.ut
+where lower(t.nev) like "%t%"
+
+--n
+--melyek azok az autópályák amelyek nem részei az európai úthálózatnak
+
+select distinct p.ut, e.eurout
+from palya p left outer join europa e on e.ut = p.ut
+where e.eurout is null
+
+--o
+--melyek azok a települések amelyek b-vel kezdődnek és azok amelyek t-vel kezdődőnek in és or clausok használata nélkül M0 és M3 utak rajtuk keresztül haladnak
+
+select t.nev 
+from telepules t, vege v 
+where t.ut = v.ut 
+and t.nev like "T%"
+and v.ut = "M0"
+
+Union 
+
+select t.nev 
+from telepules t, vege v 
+where t.ut = v.ut 
+and t.nev like "B%"
+and v.ut = "M3"
