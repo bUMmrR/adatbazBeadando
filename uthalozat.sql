@@ -20,7 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Adatbázis: `uthalozat`
 --
-
+CREATE DATABASE IF NOT EXISTS `uthalozat` DEFAULT CHARACTER SET utf8 COLLATE utf8_hungarian_ci;
+USE `uthalozat`;
 -- --------------------------------------------------------
 
 --
