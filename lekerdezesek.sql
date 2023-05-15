@@ -136,9 +136,9 @@ from europa e left join palya p on e.ut = p.ut left join telepules t on p.ut = t
 where lower(t.nev) like "%t%"
 
 --n
---melyek azok az autópályák amelyek nem részei az európai úthálózatnak
+--melyek azok az autópályák amelyek nem részei az európai úthálózatnak é
 
-select distinct p.ut, e.eurout
+select distinct p.*
 from palya p left outer join europa e on e.ut = p.ut
 where e.eurout is null
 
