@@ -24,15 +24,14 @@ insert into telepules values(
 
 --b
 --melyik útnak van a leghosszabb kész része 
--- ha több mint egy akkor az összeset
+-- ha több mint egy akkor az összessel térjen vissza a lekérdezés
 select p.ut
 from palya p 
 where p.kesz = (select max(p.kesz)
 				from palya p)
 				
 --c
---melyik autopalyaknak van hosszab tervezet resze mint
---a leghoszabb autopályának a tervezet része 
+--melyik autopalyaknak van hosszab tervezet resze mint a leghoszabb autopályának(a kész részét figyelembe véve) a tervezet része?
 -- ha több mint egy akkor az összeset
 		   
 select p.ut
@@ -46,7 +45,7 @@ where p.terv > (
 	)
 
 --d
---Válaszuk ki azokat az utakat ahol az európai út E60
+--Válaszuk ki azokat a magyar utakat amelyek az E60-s európai úthálózatba tartoznak
 select p.ut
 from palya p
 where p.ut in (select e.ut
@@ -55,18 +54,16 @@ where p.ut in (select e.ut
 
 
 --e 
---minden olyan euroút aminek nincs egyszerre tervezet része és epülö része
+--Válasszuk ki az európai úthálózatnak azokat a részeit amelyeknek nincs egyszerre tervezet és epülö része.
 select e.eurout
 from europa e
 where e.ut not in (select p.ut
 			   from palya p
 			   where p.terv > 0 and p.epul > 0)
 			   
---g
 
 --f: 
--- ird ki az összes utat amiknek a kész
---hossza nagyobb mint az m1-nek, vagy az m0-nak a kész hossza
+--Válassza ki az összes utat amiknek a kész hossza nagyobb mint az m1-nek, vagy az m0-nak a kész hossza.
 select p.ut, p.kesz
 from palya p
 where kesz > ALL(
@@ -75,7 +72,8 @@ where kesz > ALL(
     where p.ut = "M0" or p.ut = "M1"
 );
 
---g ird ki az m7-es autopalya két végén található települést
+--g
+--Mely két település található az m7-es autópálya két végén?
 select t.nev
 from telepules t
 where t.id = ANY (
@@ -85,7 +83,7 @@ where t.id = ANY (
 );
 
 --h
--- ird ki az összes olyan települést aminek az autopályája hosszabb mint 150 km
+-- Válassza ki az összes olyan települést amelynek a hozzá tartozó autópályája hosszab mint 150km.
 
 select t.nev
 FROM (
@@ -97,7 +95,8 @@ join telepules t on p.ut = t.ut
 
 
 --i
---utanként hány euroút van aminek az épülő része kisseb mint a tervezet része
+--A magyar uthálózat utjaiként hány olyan európai úthálózathoz tartozó út van amelynek az épülő része kisebb mint a tervezett része? 
+--csak az egy vagy annál nagyobb értékekkel térjen vissza a lekérdezés
 select p.ut, count(p.ut) as darab
 from palya p inner join europa e on e.ut = p.ut
 where p.epul < p.terv 
@@ -105,23 +104,25 @@ group by p.ut
 order by p.kesz desc
 
 --j
---melyek azok a megyar utak legfeljebb 3 európai úthoz kapcsolódnak és a tervezett része kisebb mint 35?
+--melyek azok a magyar utak amelyek legfeljebb 3 európai úthoz kapcsolódnak és a tervezett része kisebb mint 35km és mennyi tartozik ezekhez?
+--csökkenő sorrendben jelenjenek meg
 select p.ut, count(p.ut) as darab
 from palya p inner join europa e on e.ut = p.ut
 where p.terv < 35
 group by p.ut
 having count(p.ut) <= 3
-order by p.kesz desc
+order by darab desc
 
 --k
--- ird ki az összes olyan települést ami nem határos semmivel, vagy az autopálya végén helyezkedik
+--Melyek azok a települések amelyek nem határosak semmivel vagy az autópálya végén helyezkednek el?
+--minden település maximum egyszer jelenjen meg
 select distinct t.nev
 from telepules t
 left join vege v on t.id = v.telepid
 where t.hatar is null or v.id is not null;
 
 --l
---ird ki az összes olyan települést ami nem határos semmivel, vagy autopálya végén helyezkedik, azt is ird ki hogy hány autopályának a vége az a település
+--Melyek azok a települések amelyek nem határosak semmivel, vagy a hozzájuk tartozó autopálya végén helyezkednek el ekkor az is térjen vissza hogy hány autopályának a vége az a település?
 select t.nev, count(*)
 from telepules t
 left join vege v on t.id = v.telepid
@@ -129,14 +130,15 @@ where t.hatar is null or v.id is not null
 group by t.nev;
 
 --m 
---válasszuk ki azokat az európai utakat amelyeknek a település neve tartalmaz t-t
+--Melyek azok az európai utak amelyeknek a hozzájuk tartozó települése(i) tartalmaznak "t"-t?
+--A lekérdezés térjen vissza az úttal és a hozzá tartotó, feltételnek megfelelő településsel.
 
 select e.eurout, t.nev 
 from europa e left join palya p on e.ut = p.ut left join telepules t on p.ut = t.ut
 where lower(t.nev) like "%t%"
 
 --n
---melyek azok az autópályák amelyek nem részei az európai úthálózatnak é
+--Melyek azok az autópályák amelyek nem részei az európai úthálózatnak?
 
 select distinct p.*
 from palya p left outer join europa e on e.ut = p.ut
