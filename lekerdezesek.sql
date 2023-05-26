@@ -23,12 +23,13 @@ insert into telepules values(
 	from telepules t), "M32", "Egy nagyon jó város név",null)
 
 --b
---melyik útnak van a leghosszabb kész része 
--- ha több mint egy akkor az összessel térjen vissza a lekérdezés
-select p.ut
-from palya p 
-where p.kesz = (select max(p.kesz)
+--melyik európai útnak van a leghosszabb kész része a hozzá tartozó magyar utat figyelembe véve
+--egy magyar útnak több része lehet az európai úthálózatban és ezek közül minddel térjen vissza a lekérdezés
+select e.eurout
+from palya p, europa e
+where e.ut = p.ut and p.kesz = (select max(p.kesz)
 				from palya p)
+
 				
 --c
 --melyik autopalyaknak van hosszab tervezet resze mint a leghoszabb autopályának(a kész részét figyelembe véve) a tervezet része?
@@ -43,6 +44,7 @@ where p.terv > (
 		select max(p.kesz)
 		from palya p)
 	)
+	-----------------ez a 2.
 
 --d
 --Válaszuk ki azokat a magyar utakat amelyek az E60-s európai úthálózatba tartoznak
@@ -81,6 +83,8 @@ where t.id = ANY (
 	from vege v
 	where v.ut = 'M7'
 );
+-----------------------------ez a 3.
+
 
 --h
 -- Válassza ki az összes olyan települést amelynek a hozzá tartozó autópályája hosszab mint 150km.
@@ -92,7 +96,7 @@ FROM (
    where p.kesz > 150
 ) AS p
 join telepules t on p.ut = t.ut
-
+--------------------------ez a 4.
 
 --i
 --A magyar uthálózat utjaiként hány olyan európai úthálózathoz tartozó út van amelynek az épülő része kisebb mint a tervezett része? 
