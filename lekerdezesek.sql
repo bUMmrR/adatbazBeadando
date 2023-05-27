@@ -28,23 +28,22 @@ insert into telepules values(
 select e.eurout
 from palya p, europa e
 where e.ut = p.ut and p.kesz = (select max(p.kesz)
-				from palya p)
-
-				
+				from palya p)				
 --c
 --melyik autopalyaknak van hosszab tervezet resze mint a leghoszabb autopályának(a kész részét figyelembe véve) a tervezet része?
--- ha több mint egy akkor az összeset
+--ha több mint egy akkor az összeset
 		   
 select p.ut
 from palya p
 where p.terv > (
-	select p.terv
-	from palya p
-	where p.kesz = (
-		select max(p.kesz)
-		from palya p)
-	)
-	-----------------ez a 2.
+    SELECT p.terv
+    from palya p
+    where p.kesz = (
+        select max(p.kesz)
+        from palya p
+        where p.kesz % 2 = 0
+    )
+);
 
 --d
 --Válaszuk ki azokat a magyar utakat amelyek az E60-s európai úthálózatba tartoznak
@@ -75,28 +74,28 @@ where kesz > ALL(
 );
 
 --g
---Mely két település található az m7-es autópálya két végén?
+--mely települések vannak azoknak ez európai pályáknak a mentén amiknek a megnevezésében van 7-es szám?
 select t.nev
 from telepules t
 where t.id = ANY (
 	select v.telepid
 	from vege v
-	where v.ut = 'M7'
+	where v.ut in (select e.ut
+				  from europa e
+				  where e.eurout like "%7%")
 );
------------------------------ez a 3.
-
 
 --h
--- Válassza ki az összes olyan települést amelynek a hozzá tartozó autópályája hosszab mint 150km.
-
-select t.nev
+--Hány olyan település van amelynek autópályályának a kész része meghaladja a 50 km-t, van tervezett része és az adott terv hosszhoz hány település tartozik?
+select p.terv as tervhossza, count(t.nev) as db
 FROM (
-   select p.ut
+   select p.ut,p.terv
    from palya p
-   where p.kesz > 150
+   where p.kesz > 50 
 ) AS p
 join telepules t on p.ut = t.ut
---------------------------ez a 4.
+where p.terv>0
+group by p.terv
 
 --i
 --A magyar uthálózat utjaiként hány olyan európai úthálózathoz tartozó út van amelynek az épülő része kisebb mint a tervezett része? 
