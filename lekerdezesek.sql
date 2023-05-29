@@ -30,7 +30,7 @@ from palya p, europa e
 where e.ut = p.ut and p.kesz = (select max(p.kesz)
 				from palya p)				
 --c
---melyik autopalyaknak van hosszab tervezet resze mint a leghoszabb autopályának(a kész részét figyelembe véve) a tervezet része?
+--melyik autopalyaknak van hosszab tervezet resze mint a leghoszabb olyan autopályának amelynek a kész része osztható 2-vel a tervezet részénél?
 --ha több mint egy akkor az összeset
 		   
 select p.ut
@@ -61,7 +61,7 @@ from europa e
 where e.ut not in (select p.ut
 			   from palya p
 			   where p.terv > 0 and p.epul > 0)
-			   
+		   
 
 --f: 
 --Válassza ki az összes utat amiknek a kész hossza nagyobb mint az m1-nek, vagy az m0-nak a kész hossza.
@@ -97,6 +97,15 @@ join telepules t on p.ut = t.ut
 where p.terv>0
 group by p.terv
 
+-------------------------- Lehet hogy szimplább: ------------------------- 
+
+
+select p.terv as tervhossza, COUNT(t.nev) as db
+from palya p
+inner join telepules t on p.ut = t.ut
+where p.kesz > 50 and p.terv > 0
+group by p.terv
+
 --i
 --A magyar uthálózat utjaiként hány olyan európai úthálózathoz tartozó út van amelynek az épülő része kisebb mint a tervezett része? 
 --csak az egy vagy annál nagyobb értékekkel térjen vissza a lekérdezés
@@ -119,6 +128,8 @@ order by darab desc
 --k
 --Melyek azok a települések amelyek nem határosak semmivel vagy az autópálya végén helyezkednek el?
 --minden település maximum egyszer jelenjen meg
+
+--------------------------- UGYAN AZ A FELADAT MINT L --------------------------- 
 select distinct t.nev
 from telepules t
 left join vege v on t.id = v.telepid
