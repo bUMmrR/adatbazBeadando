@@ -130,10 +130,14 @@ order by darab desc
 --minden település maximum egyszer jelenjen meg
 
 --------------------------- UGYAN AZ A FELADAT MINT L --------------------------- 
-select distinct t.nev
-from telepules t
-left join vege v on t.id = v.telepid
-where t.hatar is null or v.id is not null;
+--melyik határon van a leghosszab kész út? csak olyannal térjen vissza ami határon van!
+
+select distinct t.hatar
+from telepules t left join palya p on p.ut = t.ut
+where t.hatar is not null and p.kesz = (select max(p.kesz)
+				from palya p)
+
+
 
 --l
 --Melyek azok a települések amelyek nem határosak semmivel, vagy a hozzájuk tartozó autopálya végén helyezkednek el ekkor az is térjen vissza hogy hány autopályának a vége az a település?
