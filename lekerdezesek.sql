@@ -47,12 +47,12 @@ where p.terv > (
 
 --d
 --Válaszuk ki azokat a magyar utakat amelyek az E60-s európai úthálózatba tartoznak
-select p.ut
-from palya p
-where p.ut in (select e.ut
-			   from europa e
-			   where e.eurout = "E60")	
 
+select t.nev
+from telepules t
+where t.ut in ( select p.ut
+				from palya p
+				where p.terv = 0)
 
 --e 
 --Válasszuk ki az európai úthálózatnak azokat a részeit amelyeknek nincs egyszerre tervezet és epülö része.
