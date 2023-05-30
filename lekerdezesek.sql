@@ -52,7 +52,7 @@ select t.nev
 from telepules t
 where t.ut in ( select p.ut
 				from palya p
-				where p.terv = 0)
+				where p.terv = 0);
 
 --e 
 --Válasszuk ki az európai úthálózatnak azokat a részeit amelyeknek nincs egyszerre tervezet és epülö része.
@@ -60,7 +60,7 @@ select e.eurout
 from europa e
 where e.ut not in (select p.ut
 			   from palya p
-			   where p.terv > 0 and p.epul > 0)
+			   where p.terv > 0 and p.epul > 0);
 		   
 
 --f: 
