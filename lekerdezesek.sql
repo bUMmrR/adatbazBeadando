@@ -94,7 +94,7 @@ FROM (
    from palya p
    where p.kesz > 50 
 ) AS p
-join telepules t on p.ut = t.ut
+inner join telepules t on p.ut = t.ut
 where p.terv>0
 group by p.terv
 
