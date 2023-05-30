@@ -67,7 +67,7 @@ where e.ut not in (select p.ut
 --Válassza ki az összes utat amiknek a kész hossza nagyobb mint az m1-nek, vagy az m0-nak a kész hossza.
 select p.ut, p.kesz
 from palya p
-where kesz > ALL(
+where p.kesz > ALL(
     select p.kesz
     from palya p
     where p.ut = "M0" or p.ut = "M1"
@@ -87,6 +87,7 @@ where t.id = ANY (
 
 --h
 --Hány olyan település van amelynek autópályályának a kész része meghaladja a 50 km-t, van tervezett része és az adott terv hosszhoz hány település tartozik?
+--Az allekérdezés mint tábla szerepeljen
 select p.terv as tervhossza, count(t.nev) as db
 FROM (
    select p.ut,p.terv
@@ -97,14 +98,6 @@ join telepules t on p.ut = t.ut
 where p.terv>0
 group by p.terv
 
--------------------------- Lehet hogy szimplább: ------------------------- 
-
-
-select p.terv as tervhossza, COUNT(t.nev) as db
-from palya p
-inner join telepules t on p.ut = t.ut
-where p.kesz > 50 and p.terv > 0
-group by p.terv
 
 --i
 --A magyar uthálózat utjaiként hány olyan európai úthálózathoz tartozó út van amelynek az épülő része kisebb mint a tervezett része? 
@@ -136,8 +129,6 @@ select distinct t.hatar
 from telepules t left join palya p on p.ut = t.ut
 where t.hatar is not null and p.kesz = (select max(p.kesz)
 				from palya p)
-
-
 
 --l
 --Melyek azok a települések amelyek nem határosak semmivel, vagy a hozzájuk tartozó autopálya végén helyezkednek el ekkor az is térjen vissza hogy hány autopályának a vége az a település?
