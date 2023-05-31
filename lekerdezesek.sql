@@ -46,8 +46,7 @@ where p.terv > (
 );
 
 --d
---Válaszuk ki azokat a magyar utakat amelyek az E60-s európai úthálózatba tartoznak
-
+--Válasszuk ki azokat a településeket amelyeknek a hozzá tartozó útjának a tervezett része 0km
 select t.nev
 from telepules t
 where t.ut in ( select p.ut
@@ -119,10 +118,6 @@ having count(p.ut) <= 3
 order by darab desc
 
 --k
---Melyek azok a települések amelyek nem határosak semmivel vagy az autópálya végén helyezkednek el?
---minden település maximum egyszer jelenjen meg
-
---------------------------- UGYAN AZ A FELADAT MINT L --------------------------- 
 --melyik határon van a leghosszab kész út? csak olyannal térjen vissza ami határon van!
 
 select distinct t.hatar
